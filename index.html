@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -7,7 +8,7 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
   <style>
     body {
-      font-family: 'Helvetica Neue', sans-serif;
+      font-family: sans-serif;
       background: #f2f2f2;
       margin: 0;
       padding: 2rem;
@@ -77,8 +78,8 @@
     <thead>
       <tr>
         <th>Datum</th>
-        <th>Start</th>
-        <th>Ende</th>
+        <th>Startzeit</th>
+        <th>Endzeit</th>
         <th>Ort</th>
         <th>Kategorie</th>
         <th>Action / Who</th>
@@ -102,8 +103,8 @@
             $("#schedule tbody").append(`
               <tr>
                 <td data-label="Datum">${cols[0]}</td>
-                <td data-label="Start">${cols[1]}</td>
-                <td data-label="Ende">${cols[2]}</td>
+                <td data-label="Startzeit">${cols[1]}</td>
+                <td data-label="Endzeit">${cols[2]}</td>
                 <td data-label="Ort">${cols[3]}</td>
                 <td data-label="Kategorie">${cols[4]}</td>
                 <td data-label="Action / Who">${cols[5]}</td>
@@ -131,7 +132,7 @@
     }
 
     function filterArtist() {
-      table.column(4).search('SET', true, false).draw();
+      table.column(4).search('SET|Get in', true, false).draw();
     }
   </script>
 </body>
