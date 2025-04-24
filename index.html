@@ -16,6 +16,22 @@
       text-align: center;
       color: #2e7d32;
     }
+    .filter-buttons {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .filter-buttons button {
+      margin: 0.2rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      background-color: #4caf50;
+      color: white;
+      cursor: pointer;
+    }
+    .filter-buttons button:hover {
+      background-color: #388e3c;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -52,6 +68,11 @@
 </head>
 <body>
   <h1>Rebstock Festival 2025 – Timetable</h1>
+  <div class="filter-buttons">
+    <button onclick="filterAll()">Alle anzeigen</button>
+    <button onclick="filterCrew()">Crewansicht</button>
+    <button onclick="filterArtist()">Künstleransicht</button>
+  </div>
   <table id="schedule">
     <thead>
       <tr>
@@ -70,6 +91,8 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
   <script>
+    let table;
+
     $(document).ready(function () {
       $.get("festival_schedule.csv", function (data) {
         const rows = data.split("\n").slice(1);
@@ -89,13 +112,27 @@
             `);
           }
         });
-        $("#schedule").DataTable({
+
+        table = $("#schedule").DataTable({
+          pageLength: 50,
           language: {
             url: "https://cdn.datatables.net/plug-ins/1.13.4/i18n/de-DE.json"
           }
         });
       });
     });
+
+    function filterAll() {
+      table.column(4).search('').draw();
+    }
+
+    function filterCrew() {
+      table.column(4).search('Setup|Load in|Changeover', true, false).draw();
+    }
+
+    function filterArtist() {
+      table.column(4).search('SET', true, false).draw();
+    }
   </script>
 </body>
 </html>
