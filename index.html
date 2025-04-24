@@ -1,17 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rebstock Festival 2025 – Timetable</title>
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
   <style>
     body {
       font-family: sans-serif;
-      background: #f2f2f2;
       margin: 0;
-      padding: 2rem;
+      padding: 1rem;
+      background-color: #f9f9f9;
     }
     h1 {
       text-align: center;
@@ -22,118 +20,99 @@
       margin-bottom: 1rem;
     }
     .filter-buttons button {
-      margin: 0.2rem;
-      padding: 0.5rem 1rem;
+      margin: 0.3rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       background-color: #4caf50;
       color: white;
       cursor: pointer;
     }
-    .filter-buttons button:hover {
-      background-color: #388e3c;
+    .event-card {
+      background: white;
+      border-radius: 10px;
+      padding: 1rem;
+      margin: 0.5rem 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    .event-card h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #333;
     }
-    th, td {
-      padding: 0.75rem;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
+    .event-meta {
+      font-size: 0.9rem;
+      color: #666;
     }
-    th {
-      background-color: #4caf50;
-      color: white;
-    }
-    @media (max-width: 768px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
-      }
-      th { display: none; }
-      td {
-        position: relative;
-        padding-left: 50%;
-      }
-      td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 0;
-        width: 45%;
-        padding-left: 0.75rem;
-        font-weight: bold;
-        color: #333;
-      }
+    .event-category {
+      display: inline-block;
+      background: #e0f2f1;
+      color: #00695c;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
     }
   </style>
 </head>
 <body>
-  <h1>Rebstock Festival 2025 – Timetable</h1>
+  <h1>Rebstock Festival 2025</h1>
   <div class="filter-buttons">
-    <button onclick="filterAll()">Alle anzeigen</button>
-    <button onclick="filterCrew()">Crewansicht</button>
-    <button onclick="filterArtist()">Künstleransicht</button>
+    <button onclick="filterAll()">Alle</button>
+    <button onclick="filterCrew()">Crew</button>
+    <button onclick="filterArtist()">Künstler</button>
   </div>
-  <table id="schedule">
-    <thead>
-      <tr>
-        <th>Datum</th>
-        <th>Startzeit</th>
-        <th>Endzeit</th>
-        <th>Ort</th>
-        <th>Kategorie</th>
-        <th>Action / Who</th>
-        <th>Notizen</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div id="schedule"></div>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
   <script>
-    let table;
+    let allEvents = [];
 
-    $(document).ready(function () {
-      $.get("festival_schedule.csv", function (data) {
-        const rows = data.split("\n").slice(1);
-        rows.forEach(row => {
-          const cols = row.split(",");
-          if (cols.length >= 7 && cols[4] !== "DATE") {
-            $("#schedule tbody").append(`
-              <tr>
-                <td data-label="Datum">${cols[0]}</td>
-                <td data-label="Startzeit">${cols[1]}</td>
-                <td data-label="Endzeit">${cols[2]}</td>
-                <td data-label="Ort">${cols[3]}</td>
-                <td data-label="Kategorie">${cols[4]}</td>
-                <td data-label="Action / Who">${cols[5]}</td>
-                <td data-label="Notizen">${cols[6]}</td>
-              </tr>
-            `);
-          }
-        });
-
-        table = $("#schedule").DataTable({
-          pageLength: 50,
-          language: {
-            url: "https://cdn.datatables.net/plug-ins/1.13.4/i18n/de-DE.json"
-          }
-        });
+    function render(events) {
+      const container = document.getElementById("schedule");
+      container.innerHTML = "";
+      events.forEach(event => {
+        const card = document.createElement("div");
+        card.className = "event-card";
+        card.innerHTML = `
+          <h3>${event["Action / Who"] || "Unbekannt"}</h3>
+          <div class="event-meta">${event.Datum} | ${event.Startzeit}–${event.Endzeit} | ${event.Ort}</div>
+          <div class="event-category">${event.Kategorie}</div>
+          ${event.Notizen ? `<div class="event-meta">Hinweis: ${event.Notizen}</div>` : ""}
+        `;
+        container.appendChild(card);
       });
-    });
+    }
 
     function filterAll() {
-      table.column(4).search('').draw();
+      render(allEvents);
     }
 
     function filterCrew() {
-      table.column(4).search('Setup|Load in|Changeover', true, false).draw();
+      const result = allEvents.filter(e => /Setup|Load in|Changeover/i.test(e.Kategorie));
+      render(result);
     }
 
     function filterArtist() {
-      table.column(4).search('SET|Get in', true, false).draw();
+      const result = allEvents.filter(e => /SET|Get in/i.test(e.Kategorie));
+      render(result);
     }
+
+    fetch("festival_schedule.csv")
+      .then(response => response.text())
+      .then(text => {
+        const rows = text.trim().split("\\n");
+        const headers = rows[0].split(",");
+        allEvents = rows.slice(1).map(line => {
+          const values = line.split(",");
+          const entry = {};
+          headers.forEach((h, i) => {
+            entry[h.trim()] = values[i] ? values[i].trim() : "";
+          });
+          return entry;
+        }).filter(e => e.Kategorie !== "DATE");
+        render(allEvents);
+      });
   </script>
 </body>
 </html>
