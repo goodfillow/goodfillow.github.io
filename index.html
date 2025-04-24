@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -79,10 +78,10 @@
     let table;
 
     $(document).ready(function () {
-      $.fn.dataTable.moment('DD.MM.YYYY'); // deutsche Datumssortierung aktivieren
+      $.fn.dataTable.moment('DD.MM.YYYY');
 
       $.get("festival_schedule.csv", function (data) {
-        const rows = data.trim().split("\n");
+        const rows = data.trim().split("\\n");
         const headers = rows[0].split(",");
 
         rows.slice(1).forEach(row => {
@@ -108,7 +107,7 @@
             url: "https://cdn.datatables.net/plug-ins/1.13.4/i18n/de-DE.json"
           },
           columnDefs: [
-            { type: 'date-eu', targets: 0 } // Datumsspalte auf europäisches Format setzen
+            { type: 'date-eu', targets: 0 }
           ]
         });
       });
