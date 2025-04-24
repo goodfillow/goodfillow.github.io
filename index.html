@@ -81,7 +81,7 @@
         <th>Ende</th>
         <th>Ort</th>
         <th>Kategorie</th>
-        <th>Act</th>
+        <th>Action / Who</th>
         <th>Notizen</th>
       </tr>
     </thead>
@@ -98,7 +98,7 @@
         const rows = data.split("\n").slice(1);
         rows.forEach(row => {
           const cols = row.split(",");
-          if (cols.length >= 7) {
+          if (cols.length >= 7 && cols[4] !== "DATE") {
             $("#schedule tbody").append(`
               <tr>
                 <td data-label="Datum">${cols[0]}</td>
@@ -106,7 +106,7 @@
                 <td data-label="Ende">${cols[2]}</td>
                 <td data-label="Ort">${cols[3]}</td>
                 <td data-label="Kategorie">${cols[4]}</td>
-                <td data-label="Act">${cols[5]}</td>
+                <td data-label="Action / Who">${cols[5]}</td>
                 <td data-label="Notizen">${cols[6]}</td>
               </tr>
             `);
