@@ -40,7 +40,7 @@
     .event-card h3 {
       margin: 0;
       font-size: 1.2rem;
-      color: #333;
+      color: #2e7d32;
     }
     .event-meta {
       font-size: 0.9rem;
@@ -55,6 +55,15 @@
       border-radius: 4px;
       font-size: 0.8rem;
       margin-top: 0.5rem;
+    }
+    .event-note {
+      font-size: 0.85rem;
+      color: #333;
+      margin-top: 0.6rem;
+      background: #fff8dc;
+      padding: 0.4rem;
+      border-left: 4px solid #ffc107;
+      border-radius: 4px;
     }
   </style>
 </head>
@@ -87,7 +96,7 @@
             📍 ${event.Ort || "?"}
           </div>
           <div class="event-category">${event.Kategorie || "?"}</div>
-          ${event.Notizen ? `<div class="event-meta">Hinweis: ${event.Notizen}</div>` : ""}
+          ${event.Notizen ? `<div class="event-note">${event.Notizen}</div>` : ""}
         `;
         container.appendChild(card);
       });
