@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -44,6 +45,7 @@
     .event-meta {
       font-size: 0.9rem;
       color: #666;
+      margin-top: 0.3rem;
     }
     .event-category {
       display: inline-block;
@@ -76,7 +78,10 @@
         card.className = "event-card";
         card.innerHTML = `
           <h3>${event["Action / Who"] || "Unbekannt"}</h3>
-          <div class="event-meta">${event.Datum} | ${event.Startzeit}–${event.Endzeit} | ${event.Ort}</div>
+          <div class="event-meta">
+            ${event.Datum} | ${event.Startzeit}–${event.Endzeit}<br>
+            📍 ${event.Ort}
+          </div>
           <div class="event-category">${event.Kategorie}</div>
           ${event.Notizen ? `<div class="event-meta">Hinweis: ${event.Notizen}</div>` : ""}
         `;
@@ -99,9 +104,12 @@
     }
 
     fetch("festival_schedule.csv")
-      .then(response => response.text())
+      .then(response => {
+        if (!response.ok) throw new Error("CSV-Datei nicht gefunden");
+        return response.text();
+      })
       .then(text => {
-        const rows = text.trim().split("\\n");
+        const rows = text.trim().split("\n");
         const headers = rows[0].split(",");
         allEvents = rows.slice(1).map(line => {
           const values = line.split(",");
@@ -112,6 +120,10 @@
           return entry;
         }).filter(e => e.Kategorie !== "DATE");
         render(allEvents);
+      })
+      .catch(err => {
+        document.getElementById("schedule").innerHTML =
+          "<p style='color:red; text-align:center;'>Fehler beim Laden: " + err.message + "</p>";
       });
   </script>
 </body>
