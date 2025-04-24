@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rebstock Festival 2025 – Timetable</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+  <style>
+    body {
+      font-family: 'Helvetica Neue', sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #4caf50;
+      color: white;
+    }
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      th { display: none; }
+      td {
+        position: relative;
+        padding-left: 50%;
+      }
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 0.75rem;
+        font-weight: bold;
+        color: #333;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Rebstock Festival 2025 – Timetable</h1>
+  <table id="schedule">
+    <thead>
+      <tr>
+        <th>Datum</th>
+        <th>Start</th>
+        <th>Ende</th>
+        <th>Ort</th>
+        <th>Kategorie</th>
+        <th>Act</th>
+        <th>Notizen</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $.get("festival_schedule.csv", function (data) {
+        const rows = data.split("\n").slice(1);
+        rows.forEach(row => {
+          const cols = row.split(",");
+          if (cols.length >= 7) {
+            $("#schedule tbody").append(`
+              <tr>
+                <td data-label="Datum">${cols[0]}</td>
+                <td data-label="Start">${cols[1]}</td>
+                <td data-label="Ende">${cols[2]}</td>
+                <td data-label="Ort">${cols[3]}</td>
+                <td data-label="Kategorie">${cols[4]}</td>
+                <td data-label="Act">${cols[5]}</td>
+                <td data-label="Notizen">${cols[6]}</td>
+              </tr>
+            `);
+          }
+        });
+        $("#schedule").DataTable({
+          language: {
+            url: "https://cdn.datatables.net/plug-ins/1.13.4/i18n/de-DE.json"
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
