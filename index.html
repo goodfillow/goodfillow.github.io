@@ -5,15 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rebstock Festival 2025 – Timetable</title>
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-
-  <!-- Moment.js für deutsche Datumssortierung -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-  <script src="https://cdn.datatables.net/plug-ins/1.13.4/sorting/datetime-moment.js"></script>
-
   <style>
     body {
-      font-family: sans-serif;
-      background: #f9f9f9;
+      font-family: 'Helvetica Neue', sans-serif;
+      background: #f2f2f2;
+      margin: 0;
       padding: 2rem;
     }
     h1 {
@@ -25,14 +21,16 @@
       margin-bottom: 1rem;
     }
     .filter-buttons button {
-      margin: 0.3rem;
-      padding: 0.6rem 1.2rem;
-      font-size: 1rem;
+      margin: 0.2rem;
+      padding: 0.5rem 1rem;
       border: none;
-      border-radius: 6px;
+      border-radius: 5px;
       background-color: #4caf50;
       color: white;
       cursor: pointer;
+    }
+    .filter-buttons button:hover {
+      background-color: #388e3c;
     }
     table {
       width: 100%;
@@ -40,20 +38,40 @@
     }
     th, td {
       padding: 0.75rem;
+      text-align: left;
       border-bottom: 1px solid #ddd;
     }
     th {
       background-color: #4caf50;
       color: white;
     }
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      th { display: none; }
+      td {
+        position: relative;
+        padding-left: 50%;
+      }
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 0.75rem;
+        font-weight: bold;
+        color: #333;
+      }
+    }
   </style>
 </head>
 <body>
   <h1>Rebstock Festival 2025 – Timetable</h1>
   <div class="filter-buttons">
-    <button onclick="filterAll()">Alle</button>
-    <button onclick="filterCrew()">Crew</button>
-    <button onclick="filterArtist()">Künstler</button>
+    <button onclick="filterAll()">Alle anzeigen</button>
+    <button onclick="filterCrew()">Crewansicht</button>
+    <button onclick="filterArtist()">Künstleransicht</button>
   </div>
 
   <table id="schedule">
@@ -73,50 +91,35 @@
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-
   <script>
     let table;
 
     $(document).ready(function () {
-      $.fn.dataTable.moment('DD.MM.YYYY');
+      $.get("festival_schedule.csv", function (data) {
+        const rows = data.trim().split("\n").slice(1);
+        rows.forEach(row => {
+          const cols = row.split(",");
+          if (cols.length >= 7 && cols[4].trim() !== "DATE") {
+            $("#schedule tbody").append(`
+              <tr>
+                <td data-label="Datum">${cols[0]}</td>
+                <td data-label="Startzeit">${cols[1]}</td>
+                <td data-label="Endzeit">${cols[2]}</td>
+                <td data-label="Ort">${cols[3]}</td>
+                <td data-label="Kategorie">${cols[4]}</td>
+                <td data-label="Action / Who">${cols[5]}</td>
+                <td data-label="Notizen">${cols[6]}</td>
+              </tr>
+            `);
+          }
+        });
 
-      $.ajax({
-        url: "festival_schedule.csv",
-        dataType: "text",
-        success: function(data) {
-          const lines = data.trim().split("\n");
-          const headers = lines[0].split(",");
-
-          lines.slice(1).forEach(line => {
-            const cols = line.split(",");
-            if (cols.length >= 7 && cols[4].trim() !== "DATE") {
-              $("#schedule tbody").append(`
-                <tr>
-                  <td>${cols[0].trim()}</td>
-                  <td>${cols[1].trim()}</td>
-                  <td>${cols[2].trim()}</td>
-                  <td>${cols[3].trim()}</td>
-                  <td>${cols[4].trim()}</td>
-                  <td>${cols[5].trim()}</td>
-                  <td>${cols[6].trim()}</td>
-                </tr>
-              `);
-            }
-          });
-
-          table = $("#schedule").DataTable({
-            pageLength: 50,
-            language: {
-              url: "https://cdn.datatables.net/plug-ins/1.13.4/i18n/de-DE.json"
-            },
-            columnDefs: [
-              { type: 'date-eu', targets: 0 }
-            ]
-          });
-        },
-        error: function(xhr, status, error) {
-          document.getElementById("schedule").outerHTML = "<p style='color:red; text-align:center;'>Fehler beim Laden der CSV: " + error + "</p>";
-        }
+        table = $("#schedule").DataTable({
+          pageLength: 50,
+          language: {
+            url: "https://cdn.datatables.net/plug-ins/1.13.4/i18n/de-DE.json"
+          }
+        });
       });
     });
 
