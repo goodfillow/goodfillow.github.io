@@ -25,7 +25,7 @@ Datum,Startzeit,Endzeit,Ort,Kategorie,Action / Who,Notizen
 30.05.25,20:15,20:45,Main Stage,Changeover,Changeover,
 30.05.25,20:45,22:00,Main Stage,SET,ok.danke.tschüss,
 30.05.25,22:00,,Venue,END,Closing,
-30.05.25,22:05,22:15,END,TestTestTest
+30.05.25,22:05,22:15,END,TestTestTest,
 31.05.25,0:01,,,DATE,Tag 4 von 4,
 31.05.25,13:00,,Backstage,Get in,Slot 7 // TBA,
 31.05.25,13:00,14:30,Venue,Setup,Kletterturm,
